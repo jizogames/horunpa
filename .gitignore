@@ -7,6 +7,11 @@
 *.dll
 *.so
 *.dylib
+*.aar
+*.jar
+build/
+dist/
+bin/
 
 # Test binary, built with `go test -c`
 *.test
@@ -17,16 +22,24 @@ coverage.*
 *.coverprofile
 profile.cov
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
-
 # Go workspace file
 go.work
 go.work.sum
 
-# env file
+# Security 
 .env
+*.pem
+*.key
+id_rsa
+
+# OS
+.DS_Store
+Thumbs.db
 
 # Editor/IDE
-# .idea/
-# .vscode/
+*~
+.vscode/
+
+# Resources file
+*.ai
+*.piskel
