@@ -8,4 +8,7 @@ var (
 
 	//go:embed fonts/*
 	Fonts embed.FS
+
+	//go:embed audio/*
+	Audio embed.FS
 )

@@ -11,9 +11,12 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/jizogames/horunpa/game/assets"
+	"github.com/jizogames/horunpa/game/audio"
 )
 
-type Game struct{}
+type Game struct {
+	audio *audio.Manager
+}
 
 func (g *Game) Update() error {
 	return nil
@@ -58,12 +61,24 @@ func SetIcons(fs embed.FS, dir string) error {
 }
 
 func NewGame() (*Game, error) {
-	g := &Game{}
+	const audioSampleRate int = 48000
+	audioManager, err := audio.NewManager(audioSampleRate)
+	if err != nil {
+		return nil, fmt.Errorf("オーディオマネジャーの初期化に失敗しました: %w", err)
+	}
+
+	g := &Game{
+		audio: audioManager,
+	}
 
 	ebiten.SetWindowTitle("ほるんぱ")
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	if err := SetIcons(assets.Icons, "icons"); err != nil {
 		return nil, fmt.Errorf("アイコンの設定に失敗しました: %w", err)
+	}
+
+	if err := g.audio.PlayBGM("bgm"); err != nil {
+		return nil, fmt.Errorf("BGMの再生に失敗しました: %w", err)
 	}
 
 	return g, nil
