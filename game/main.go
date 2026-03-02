@@ -12,12 +12,12 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/jizogames/horunpa/game/assets"
 	"github.com/jizogames/horunpa/game/audio"
-	"github.com/jizogames/horunpa/game/treasure"
 )
 
 type Game struct {
-	audio     *audio.Manager
-	treasures *treasure.Manager
+	audio *audio.Manager
+
+	chara *Character
 }
 
 func (g *Game) Update() error {
@@ -26,7 +26,7 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{224, 235, 175, 255})
-	g.treasures.Draw(screen)
+	g.chara.Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
@@ -70,14 +70,14 @@ func NewGame() (*Game, error) {
 		return nil, fmt.Errorf("オーディオマネジャーの初期化に失敗しました: %w", err)
 	}
 
-	treasureManager, err := treasure.NewManager()
+	chara, err := NewCharacter()
 	if err != nil {
-		return nil, fmt.Errorf("とレジャーマネジャーの初期化に失敗しました: %w", err)
+		return nil, fmt.Errorf("キャラクターの初期化に失敗しました: %w", err)
 	}
 
 	g := &Game{
-		audio:     audioManager,
-		treasures: treasureManager,
+		audio: audioManager,
+		chara: chara,
 	}
 
 	ebiten.SetWindowTitle("ほるんぱ")
