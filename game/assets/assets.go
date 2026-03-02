@@ -11,4 +11,7 @@ var (
 
 	//go:embed audio/*
 	Audio embed.FS
+
+	//go:embed images/*
+	Images embed.FS
 )
