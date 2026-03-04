@@ -17,6 +17,7 @@ import (
 type Game struct {
 	audio *audio.Manager
 
+	wall  *Wall
 	chara *Character
 }
 
@@ -26,6 +27,7 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{224, 235, 175, 255})
+	g.wall.Draw(screen)
 	g.chara.Draw(screen)
 }
 
@@ -75,8 +77,16 @@ func NewGame() (*Game, error) {
 		return nil, fmt.Errorf("キャラクターの初期化に失敗しました: %w", err)
 	}
 
+	LoadCellImages()
+	wall, err := NewWall()
+	if err != nil {
+		return nil, fmt.Errorf("壁の初期化に失敗しました: %w", err)
+	}
+
 	g := &Game{
 		audio: audioManager,
+
+		wall:  wall,
 		chara: chara,
 	}
 
