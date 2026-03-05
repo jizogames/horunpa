@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/jizogames/horunpa/game/assets"
 	"github.com/jizogames/horunpa/game/audio"
 )
@@ -22,6 +23,20 @@ type Game struct {
 }
 
 func (g *Game) Update() error {
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		cx, cy := ebiten.CursorPosition()
+		if cx < 135 || cy < 9 || cx > 495 || cy > 261 {
+			return nil
+		}
+
+		x := (cx - 135) / 36
+		y := (cy - 9) / 36
+
+		if g.wall.Cells[y][x].HP > 0 {
+			g.wall.Cells[y][x].HP--
+		}
+	}
+
 	return nil
 }
 
