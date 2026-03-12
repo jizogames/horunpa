@@ -6,6 +6,7 @@ import (
 	"image"
 	"image/color"
 	_ "image/png"
+	"math/rand"
 	"path"
 	"path/filepath"
 
@@ -18,8 +19,9 @@ import (
 type Game struct {
 	audio *audio.Manager
 
-	wall  *Wall
-	chara *Character
+	wall      *Wall
+	chara     *Character
+	treasures []*Treasure
 }
 
 func (g *Game) Update() error {
@@ -98,11 +100,21 @@ func NewGame() (*Game, error) {
 		return nil, fmt.Errorf("壁の初期化に失敗しました: %w", err)
 	}
 
+	LoadTreasureImages()
+	treasures := make([]*Treasure, 3)
+	for i := 0; i < 3; i++ {
+		id := rand.Intn(3)
+		treasures[i] = &Treasure{
+			ID: id,
+		}
+	}
+
 	g := &Game{
 		audio: audioManager,
 
-		wall:  wall,
-		chara: chara,
+		wall:      wall,
+		chara:     chara,
+		treasures: treasures,
 	}
 
 	ebiten.SetWindowTitle("ほるんぱ")
