@@ -22,9 +22,16 @@ type Game struct {
 	wall      *Wall
 	chara     *Character
 	treasures []*Treasure
+
+	scene Scene
 }
 
 func (g *Game) Update() error {
+	if g.scene == nil {
+		g.scene = NewIntro()
+	}
+	g.scene.Update()
+
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		cx, cy := ebiten.CursorPosition()
 		if cx < 135 || cy < 9 || cx > 495 || cy > 261 {
@@ -46,6 +53,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{224, 235, 175, 255})
 	g.wall.Draw(screen)
 	g.chara.Draw(screen)
+	g.scene.Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
@@ -141,4 +149,19 @@ func Run() error {
 	}
 
 	return nil
+}
+
+type GameStateMsg int
+
+const (
+	GAMESTATE_MSG_NONE GameStateMsg = iota
+	GAMESTATE_MSG_REQ_INTRO
+	GAMESTATE_MSG_REQ_TITLE
+	GAMESTATE_MSG_REQ_MAIN
+)
+
+type Scene interface {
+	Update()
+	Draw(screen *ebiten.Image)
+	Msg() GameStateMsg
 }
