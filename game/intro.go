@@ -56,7 +56,7 @@ func NewIntro() *Intro {
 		{
 			Frame: 0,
 			Action: func(i *Intro) {
-				i.sprites = append(i.sprites, NewLogoSprite(35, 50, 240))
+				i.sprites = append(i.sprites, NewLogoSprite(60, 60, 240))
 			},
 		},
 		{
