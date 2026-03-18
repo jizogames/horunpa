@@ -17,12 +17,6 @@ import (
 )
 
 type Game struct {
-	audio *audio.Manager
-
-	wall      *Wall
-	chara     *Character
-	treasures []*Treasure
-
 	scene Scene
 }
 
@@ -30,29 +24,18 @@ func (g *Game) Update() error {
 	if g.scene == nil {
 		g.scene = NewIntro()
 	}
-	g.scene.Update()
 
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-		cx, cy := ebiten.CursorPosition()
-		if cx < 135 || cy < 9 || cx > 495 || cy > 261 {
-			return nil
-		}
-
-		x := (cx - 135) / 36
-		y := (cy - 9) / 36
-
-		if g.wall.Cells[y][x].HP > 0 {
-			g.wall.Cells[y][x].HP--
-		}
+	switch g.scene.Msg() {
+	case GAMESTATE_MSG_REQ_MAIN:
+		g.scene = NewGameScene()
 	}
+
+	g.scene.Update()
 
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	screen.Fill(color.RGBA{224, 235, 175, 255})
-	g.wall.Draw(screen)
-	g.chara.Draw(screen)
 	g.scene.Draw(screen)
 }
 
@@ -91,48 +74,12 @@ func SetIcons(fs embed.FS, dir string) error {
 }
 
 func NewGame() (*Game, error) {
-	const audioSampleRate int = 48000
-	audioManager, err := audio.NewManager(audioSampleRate)
-	if err != nil {
-		return nil, fmt.Errorf("オーディオマネジャーの初期化に失敗しました: %w", err)
-	}
-
-	chara, err := NewCharacter()
-	if err != nil {
-		return nil, fmt.Errorf("キャラクターの初期化に失敗しました: %w", err)
-	}
-
-	LoadCellImages()
-	wall, err := NewWall()
-	if err != nil {
-		return nil, fmt.Errorf("壁の初期化に失敗しました: %w", err)
-	}
-
-	LoadTreasureImages()
-	treasures := make([]*Treasure, 3)
-	for i := 0; i < 3; i++ {
-		id := rand.Intn(3)
-		treasures[i] = &Treasure{
-			ID: id,
-		}
-	}
-
-	g := &Game{
-		audio: audioManager,
-
-		wall:      wall,
-		chara:     chara,
-		treasures: treasures,
-	}
+	g := &Game{}
 
 	ebiten.SetWindowTitle("ほるんぱ")
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	if err := SetIcons(assets.Icons, "icons"); err != nil {
 		return nil, fmt.Errorf("アイコンの設定に失敗しました: %w", err)
-	}
-
-	if err := g.audio.PlayBGM("bgm"); err != nil {
-		return nil, fmt.Errorf("BGMの再生に失敗しました: %w", err)
 	}
 
 	return g, nil
@@ -164,4 +111,82 @@ type Scene interface {
 	Update()
 	Draw(screen *ebiten.Image)
 	Msg() GameStateMsg
+}
+
+type GameScene struct {
+	audio *audio.Manager
+
+	wall      *Wall
+	chara     *Character
+	treasures []*Treasure
+
+	gameStateMsg GameStateMsg
+}
+
+func (g *GameScene) Update() {
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		cx, cy := ebiten.CursorPosition()
+		if cx < 135 || cy < 9 || cx > 495 || cy > 261 {
+			return
+		}
+
+		x := (cx - 135) / 36
+		y := (cy - 9) / 36
+
+		if g.wall.Cells[y][x].HP > 0 {
+			g.wall.Cells[y][x].HP--
+		}
+	}
+}
+
+func (g *GameScene) Draw(screen *ebiten.Image) {
+	screen.Fill(color.RGBA{224, 235, 175, 255})
+	g.wall.Draw(screen)
+	g.chara.Draw(screen)
+}
+
+func (g *GameScene) Msg() GameStateMsg {
+	return g.gameStateMsg
+}
+
+func NewGameScene() *GameScene {
+	const audioSampleRate int = 48000
+	audioManager, err := audio.NewManager(audioSampleRate)
+	if err != nil {
+		panic(err)
+	}
+
+	chara, err := NewCharacter()
+	if err != nil {
+		panic(err)
+	}
+
+	LoadCellImages()
+	wall, err := NewWall()
+	if err != nil {
+		panic(err)
+	}
+
+	LoadTreasureImages()
+	treasures := make([]*Treasure, 3)
+	for i := 0; i < 3; i++ {
+		id := rand.Intn(3)
+		treasures[i] = &Treasure{
+			ID: id,
+		}
+	}
+
+	g := &GameScene{
+		audio: audioManager,
+
+		wall:      wall,
+		chara:     chara,
+		treasures: treasures,
+	}
+
+	if err := g.audio.PlayBGM("bgm"); err != nil {
+		panic(err)
+	}
+
+	return g
 }
