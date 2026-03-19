@@ -46,7 +46,7 @@ func (i *Intro) Msg() GameStateMsg {
 }
 
 func (i *Intro) AllTasksFinished() {
-	i.gameStateMsg = GAMESTATE_MSG_REQ_MAIN
+	i.gameStateMsg = GAMESTATE_MSG_REQ_TITLE
 }
 
 func NewIntro() *Intro {

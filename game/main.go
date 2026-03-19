@@ -14,6 +14,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/jizogames/horunpa/game/assets"
 	"github.com/jizogames/horunpa/game/audio"
+	"github.com/jizogames/horunpa/game/draw"
 )
 
 type Game struct {
@@ -26,6 +27,8 @@ func (g *Game) Update() error {
 	}
 
 	switch g.scene.Msg() {
+	case GAMESTATE_MSG_REQ_TITLE:
+		g.scene = NewTitle()
 	case GAMESTATE_MSG_REQ_MAIN:
 		g.scene = NewGameScene()
 	}
@@ -189,4 +192,36 @@ func NewGameScene() *GameScene {
 	}
 
 	return g
+}
+
+type Title struct {
+	logo         *ebiten.Image
+	gameStateMsg GameStateMsg
+}
+
+func (t *Title) Update() {
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		t.gameStateMsg = GAMESTATE_MSG_REQ_MAIN
+	}
+}
+
+func (t *Title) Draw(screen *ebiten.Image) {
+	screen.Fill(color.RGBA{224, 235, 175, 255})
+	draw.DrawAt(screen, t.logo, 150, 90)
+}
+
+func (t *Title) Msg() GameStateMsg {
+	return t.gameStateMsg
+}
+
+func NewTitle() *Title {
+	logo, err := draw.LoadImage(assets.Images, "images/title.png")
+	if err != nil {
+		panic(err)
+	}
+
+	t := &Title{
+		logo: logo,
+	}
+	return t
 }
