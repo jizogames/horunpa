@@ -15,6 +15,7 @@ import (
 	"github.com/jizogames/horunpa/game/assets"
 	"github.com/jizogames/horunpa/game/audio"
 	"github.com/jizogames/horunpa/game/draw"
+	"github.com/jizogames/horunpa/game/ui"
 )
 
 type Game struct {
@@ -122,6 +123,7 @@ type GameScene struct {
 	wall      *Wall
 	chara     *Character
 	treasures []*Treasure
+	windows   []*ui.Window
 
 	gameStateMsg GameStateMsg
 }
@@ -146,6 +148,9 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{224, 235, 175, 255})
 	g.wall.Draw(screen)
 	g.chara.Draw(screen)
+	for _, win := range g.windows {
+		win.Draw(screen)
+	}
 }
 
 func (g *GameScene) Msg() GameStateMsg {
@@ -170,13 +175,20 @@ func NewGameScene() *GameScene {
 		panic(err)
 	}
 
-	LoadTreasureImages()
+	if err := LoadTreasureImages(); err != nil {
+		panic(err)
+	}
 	treasures := make([]*Treasure, 3)
+	windows := make([]*ui.Window, 0, 3)
 	for i := 0; i < 3; i++ {
 		id := rand.Intn(3)
 		treasures[i] = &Treasure{
 			ID: id,
 		}
+
+		win := ui.NewWindow(ui.NewRect(7, 9+(i*86), 121, 78), color.RGBA{255, 255, 255, 255}, treasureImg[id], 2)
+		win.Activate()
+		windows = append(windows, win)
 	}
 
 	g := &GameScene{
@@ -185,6 +197,7 @@ func NewGameScene() *GameScene {
 		wall:      wall,
 		chara:     chara,
 		treasures: treasures,
+		windows:   windows,
 	}
 
 	if err := g.audio.PlayBGM("bgm"); err != nil {

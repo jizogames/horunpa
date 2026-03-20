@@ -31,7 +31,7 @@ func (t *Treasure) Draw(screen *ebiten.Image) {
 }
 
 func LoadTreasureImages() error {
-	filename := "treasure.png"
+	filename := "treasures.png"
 
 	f, err := assets.Images.Open(path.Join("images", filename))
 	if err != nil {
@@ -46,7 +46,7 @@ func LoadTreasureImages() error {
 
 	treasure := ebiten.NewImageFromImage(img)
 	for y := 0; y < 6; y++ {
-		tre := treasure.SubImage(image.Rect(0, y*26, 39, (y+1)*26)).(*ebiten.Image)
+		tre := treasure.SubImage(image.Rect(0, y*78, 117, (y+1)*78)).(*ebiten.Image)
 		treasureImg = append(treasureImg, tre)
 	}
 
