@@ -21,7 +21,8 @@ type Position struct {
 type Treasure struct {
 	Position
 
-	ID int
+	ID     int
+	hidden bool
 }
 
 func (t *Treasure) Draw(screen *ebiten.Image) {
