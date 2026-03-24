@@ -220,7 +220,7 @@ func (t *Title) Update() {
 
 func (t *Title) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{224, 235, 175, 255})
-	draw.DrawAt(screen, t.logo, 150, 90)
+	draw.DrawAt(screen, t.logo, 100, 40)
 }
 
 func (t *Title) Msg() GameStateMsg {
