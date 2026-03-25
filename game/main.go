@@ -209,6 +209,7 @@ func NewGameScene() *GameScene {
 
 type Title struct {
 	logo         *ebiten.Image
+	chara        *Character
 	gameStateMsg GameStateMsg
 }
 
@@ -221,6 +222,7 @@ func (t *Title) Update() {
 func (t *Title) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{224, 235, 175, 255})
 	draw.DrawAt(screen, t.logo, 100, 40)
+	t.chara.Draw(screen)
 }
 
 func (t *Title) Msg() GameStateMsg {
@@ -233,8 +235,14 @@ func NewTitle() *Title {
 		panic(err)
 	}
 
+	chara, err := NewCharacter()
+	if err != nil {
+		panic(err)
+	}
+
 	t := &Title{
-		logo: logo,
+		logo:  logo,
+		chara: chara,
 	}
 	return t
 }
