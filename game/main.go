@@ -131,7 +131,7 @@ type GameScene struct {
 func (g *GameScene) Update() {
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		cx, cy := ebiten.CursorPosition()
-		if cx < 135 || cy < 9 || cx > 495 || cy > 261 {
+		if cx < 135 || cy < 9 || cx >= 495 || cy >= 261 {
 			return
 		}
 
