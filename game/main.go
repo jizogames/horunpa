@@ -181,7 +181,7 @@ func NewGameScene() *GameScene {
 	treasures := make([]*Treasure, 3)
 	windows := make([]*ui.Window, 0, 3)
 	for i := 0; i < 3; i++ {
-		id := rand.Intn(8)
+		id := rand.Intn(7)
 		treasures[i] = &Treasure{
 			ID: id,
 		}

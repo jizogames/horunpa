@@ -22,8 +22,11 @@ const (
 )
 
 type Cell struct {
-	HP   int
-	Rock bool
+	HP int
+
+	TreasureIndex int // -1 なら何もない.
+	PieceX        int
+	PieceY        int
 }
 
 type Wall struct {
@@ -54,8 +57,7 @@ func NewWall() (*Wall, error) {
 		for x := 0; x < WallWidth; x++ {
 			hp := rand.Intn(3) + 1
 			row[x] = Cell{
-				HP:   hp,
-				Rock: false,
+				HP: hp,
 			}
 		}
 		cells[y] = row
